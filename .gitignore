@@ -43,3 +43,6 @@ next-env.d.ts
 # local QA output (screenshots, audit report)
 /dogfood-output/
 /audit/
+
+.vercel
+.env*
