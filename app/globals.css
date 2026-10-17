@@ -1,26 +1,234 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Two colour themes only:
+ *   1. Logo teal  — #466D68, sampled from the Alpha Prana Healing logo (plus darker shades of it)
+ *   2. Sand       — #DDCFBF, the original site's secondary colour (plus a lighter tint of it)
+ * Two type families only: Playfair Display (headings) and Lato (everything else).
+ */
+@theme {
+  --color-brand: #466d68;
+  --color-brand-dark: #2f4b47;
+  --color-brand-ink: #1e2e2c;
+  --color-sand: #ddcfbf;
+  --color-cream: #f4efe9;
+
+  --font-display: var(--font-playfair), "Playfair Display", Georgia, serif;
+  --font-sans: var(--font-lato), "Lato", system-ui, sans-serif;
+
+  --tracking-brand: 0.03125rem; /* 0.5px, as in the original kit */
+  --ease-calm: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    --section-y: 3.5rem;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: var(--color-cream);
+    color: var(--color-brand-ink);
+    font-family: var(--font-sans);
+    letter-spacing: var(--tracking-brand);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: var(--tracking-brand);
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--color-sand);
+    color: var(--color-brand-ink);
+  }
+
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+
+  @media (min-width: 768px) {
+    html {
+      --section-y: 4.5rem;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .container-brand {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .container-brand {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /*
+   * One vertical rhythm for every section on the site. Use section-y for both edges,
+   * section-t / section-b when a section starts or ends with full-bleed media.
+   */
+  .section-y {
+    padding-block: var(--section-y);
+  }
+  .section-t {
+    padding-top: var(--section-y);
+  }
+  .section-b {
+    padding-bottom: var(--section-y);
+  }
+
+  .h-display {
+    font-size: clamp(2.5rem, 1.6rem + 3.4vw, 4.25rem);
+  }
+  .h-section {
+    font-size: clamp(2rem, 1.45rem + 2.1vw, 3.1rem);
+  }
+  .h-item {
+    font-size: clamp(1.4rem, 1.2rem + 0.7vw, 1.75rem);
+  }
+
+  /* One shared style for header menu and footer links, so the two always match. */
+  .nav-text {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-brand);
+  }
+  @media (min-width: 1280px) {
+    .nav-text {
+      font-size: 1.125rem;
+    }
+  }
+
+  /*
+   * The lotus from the logo, used as a quiet watermark to fill open space.
+   * Rendered as a mask so it takes whatever theme colour the element's text colour is.
+   */
+  .lotus {
+    display: block;
+    aspect-ratio: 352 / 218;
+    background-color: currentColor;
+    -webkit-mask: url("/brand/lotus-mark.png") center / contain no-repeat;
+    mask: url("/brand/lotus-mark.png") center / contain no-repeat;
+    pointer-events: none;
+  }
+
+  /*
+   * Closing band sizing: on desktop the band + footer exactly fill the screen below the
+   * fixed header when the visitor reaches the bottom. Heights are measured live by Header.tsx;
+   * the fallbacks (header ≈ 5.75rem, footer ≈ 17rem) cover the first paint.
+   */
+  @media (min-width: 1024px) {
+    .cta-fit {
+      min-height: max(18rem, calc(100svh - var(--header-h, 5.75rem) - var(--footer-h, 17rem)));
+    }
+  }
+
+  /* Text links with a quiet underline that grows on hover */
+  .link-quiet {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 2px;
+    transition: background-size 0.35s var(--ease-calm), color 0.2s;
+  }
+  .link-quiet:hover {
+    background-size: 35% 1px;
+  }
+}
+
+/*
+ * Entrance reveals: CSS scroll-driven, transform/opacity only (no layout shift),
+ * progressive (browsers without support simply show content) and disabled for
+ * reduced-motion users.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+    .reveal-img {
+      animation: reveal-img linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
+
+  .hero-in {
+    animation: hero-in 1s var(--ease-calm) both;
+  }
+  .hero-in-delay {
+    animation: hero-in 1s 0.15s var(--ease-calm) both;
+  }
+  .hero-img {
+    animation: hero-img 1.6s var(--ease-calm) both;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-img {
+  from {
+    opacity: 0.2;
+    clip-path: inset(8% 6% 8% 6%);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-img {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+  }
 }

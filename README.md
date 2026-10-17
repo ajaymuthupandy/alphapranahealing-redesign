@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Alpha Prana Healing — website
 
-## Getting Started
-
-First, run the development server:
+Next.js (App Router) + TypeScript + Tailwind CSS v4 rebuild of [alphapranahealing.com](https://alphapranahealing.com).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build && npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things live
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | What |
+| --- | --- |
+| `lib/site.ts` | Phone, email, WhatsApp/booking URLs, navigation — all taken from the live site |
+| `lib/content.ts` | Services, sessions, yoga classes, blessing program, testimonials (verbatim), blog list |
+| `lib/images.ts` | Static imports + alt text for every original photo in `assets/images/` |
+| `app/globals.css` | Brand tokens (from the original Elementor kit) and the scroll-reveal motion |
+| `components/` | Header, Footer, buttons, PageHero, CtaBand, Testimonials, Gallery, video + contact widgets |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Brand system
 
-## Learn More
+- **Two colour themes:** logo teal `#466D68` (sampled from the logo; shades `#2F4B47`, `#1E2E2C`) and sand `#DDCFBF` (tint `#F4EFE9`).
+- **Two type families:** Playfair Display (headings) and Lato (everything else). Header menu and footer links share `.nav-text`.
+- **Theme element:** the lotus from the logo (`public/brand/lotus-mark.png`), applied with the `.lotus` class as a tinted watermark.
+- **Hero video:** `public/video/hero.mp4` — a silent 30s loop (720p, ~4.3 MB) cut from the opening of the "Open Online Class" YouTube video. It plays in a plain `<video>` with no controls, fading in 1.5s after load (`components/HeroVideo.tsx`); reduced-motion and data-saver visitors see the photo instead.
 
-To learn more about Next.js, take a look at the following resources:
+## Notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Blog posts link to the existing articles on alphapranahealing.com; their bodies were not migrated.
+- The contact form has no backend — it composes the enquiry and opens WhatsApp (the business's booking channel).
+- The Instagram link is the generic `https://www.instagram.com/` used on the live site; replace it in `lib/site.ts` with the real profile.
